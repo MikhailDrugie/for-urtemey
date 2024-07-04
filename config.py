@@ -5,7 +5,7 @@ import json
 class Config:
     def __init__(self, path: str = 'config.json'):
         try:
-            self.__config: dict = json.loads(path)
+            self.__config: dict = json.loads(open(path, 'r').read())
         except Exception as e:
             raise SystemExit(e)
         self.TOKEN = self.__config.get('TOKEN', '')

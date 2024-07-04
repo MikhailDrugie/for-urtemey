@@ -42,7 +42,7 @@ def db_session(config: Config):
 
 
 class Database:
-    config: Config
+    config = Config()
     
     @db_session(config)
     def __init__(self, cursor: pymysql.cursors.DictCursor):

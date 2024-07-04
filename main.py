@@ -13,9 +13,10 @@ from database import db, Database
 
 
 def get_db(config: Config):
-    _db = db(config)
-    print('DB Initialized')
-    return _db
+    # _db = db(config)
+    # print('DB Initialized')
+    # return _db
+    return None
 
 
 def template(name: str, **kwargs):
@@ -28,24 +29,24 @@ def get_router(config: Config, db: Database):
     
     @router.get('/check-user')
     async def check_user(request: Request):
-        chat_id = request.query.get('chat_id', None)
-        if chat_id is None or not chat_id.isdigit():
-            raise web.HTTPBadRequest(f'Bad chat_id parameter passed: {chat_id}')
-        user = db.get_user(chat_id)
-        print(user)
+        # chat_id = request.query.get('chat_id', None)
+        # if chat_id is None or not chat_id.isdigit():
+        #     raise web.HTTPBadRequest(f'Bad chat_id parameter passed: {chat_id}')
+        # user = db.get_user(chat_id)
+        # print(user)
         return web.json_response({'status': 'ok'})
     
     @router.post('/save-user')
     async def save_user(request: Request):
-        pass
+        return web.json_response({'status': 'ok'})
     
     @router.post('/init-session')
     async def init_session(request: Request):
-        pass
+        return web.json_response({'status': 'ok'})
     
     @router.get('/')
     async def index(request: Request):
-        pass
+        return web.json_response({'status': 'ok'})
     
     @router.get('/boobs')
     @template('base')
@@ -62,6 +63,8 @@ def get_router(config: Config, db: Database):
     async def boost(request: Request):
         return {'page_name': 'boost'}
     
+    return router
+    
     
 def get_app(config: Config):
     app = web.Application(middlewares=[
@@ -77,6 +80,7 @@ async def start(runner: web.AppRunner):
     print('Starting app...')
     await runner.setup()
     site = web.TCPSite(runner, '0.0.0.0', 8080)
+    print(f'Started app on http://0.0.0.0:8080...')
     await site.start()
 
 
@@ -84,13 +88,14 @@ if __name__ == '__main__':
     config = Config()
     app = get_app(config)
     runner = web.AppRunner(app)
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
     try:
-        loop.run_until_complete(start(runner))
+        loop.create_task(start(runner))
+        loop.run_forever()
     except KeyboardInterrupt:
         print('App closed manually')
     except Exception as e:
-            print(e)
+        print(e)
     finally:
         loop.run_until_complete(runner.cleanup())
         loop.run_until_complete(loop.shutdown_asyncgens())
