@@ -1,4 +1,5 @@
 import json
+import asyncio
 from aiohttp import web
 from aiohttp.web_request import Request
 from aiohttp_session import session_middleware
@@ -69,3 +70,28 @@ def get_app(config: Config):
     setup(app)
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
     app.add_routes(get_router(config, get_db(config)))
+    return app
+
+
+async def start(runner: web.AppRunner):
+    print('Starting app...')
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', 8080)
+    await site.start()
+
+
+if __name__ == '__main__':
+    config = Config()
+    app = get_app(config)
+    runner = web.AppRunner(app)
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(start(runner))
+    except KeyboardInterrupt:
+        print('App closed manually')
+    except Exception as e:
+            print(e)
+    finally:
+        loop.run_until_complete(runner.cleanup())
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.close()
