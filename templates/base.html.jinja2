@@ -1,0 +1,32 @@
+{% macro style(name) -%}
+     <link rel="stylesheet" href="/css/{{ name }}" />
+{%- endmacro %}
+
+{% macro script(name) -%}
+     <script src="/js/{{ name }}"></script>
+{%- endmacro %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <link rel="icon" href="/img/favicon.ico">
+        {% block styles %}
+            {{ style('bootstrap-5.3.3/bootstrap.min.css') }}
+            {{ style('bootstrap-icons-1.11.3/font/bootstrap-icons.min.css') }}
+            {{ style('style.css') }}
+        {% endblock %}
+        {% block scripts %}
+            {{ script('jquery-3.7.1.min.js') }}
+            {{ script('bootstrap-5.3.3/bootstrap.min.js') }}
+            {{ script('script.js') }}
+        {% endblock %}
+
+        <title>{{ page_name }}</title>
+    {% endblock %}
+</head>
+<body>
+    <div class="container" id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
